@@ -8,7 +8,7 @@ public class Main {
     private static final int[] valoresGanar = {7, 11};
     private static final double APUESTA_MIN = 20;
     private static double apuesta = 0;
-    private static double saldo = 500;
+    private static double saldo = 100;
 
     public static void main(String[] args) {
         int opcion;
@@ -24,8 +24,9 @@ public class Main {
 
             switch (opcion) {
                 case 1:
+                    System.out.println("Tienes: "+ saldo);
                     System.out.println("Cuanto quieres apostars");
-                    apuesta = apostar();
+                    apuesta = apostar(APUESTA_MIN);
                     System.out.println("Has apostado " + apuesta);
                     System.out.println("¿Que quiere hacer?");
                     System.out.println("Tirar");
@@ -37,7 +38,7 @@ public class Main {
                         System.out.println("Has ganado");
                         saldo += apuesta;
                     } else if (estaEn(valoresPerder, tirada1)) {
-                        System.out.println("Has perdido sacaste :");
+                        System.out.println("Has perdido");
                         saldo -= apuesta;
                     } else {
                         logicasegundatirada(tirada1);
@@ -69,20 +70,24 @@ public class Main {
 
 
             switch (opcion) {
-                case 1:
-                    System.out.println("Cuanto quieres apostars");
-                    apuesta = apostar();
-                    System.out.println("¿Que quiere hacer?");
 
-                case 2:
+                case 1:
+                    System.out.println("Cuanto quieres apostar");
+                    apuesta = apostar(apuesta);
+                    System.out.println("Que quieres hacer");
+
                     System.out.println("Tirar");
                     pedirOpcion(new int[]{1});
                     tirada2 = tirarDados();
                     System.out.println("sacaste:" + tirada2);
                     if (tirada1 == tirada2) {
                         System.out.println("Has ganados: ");
+                        saldo += apuesta;
+                        apuesta=0;
                     } else if (tirada2 == 7) {
                         System.out.println("Has perdido");
+                        saldo-=apuesta;
+                        apuesta=0;
                         if (saldo < 20) {
                             System.out.println("Su saldo no permite jugar");
                             System.exit(0);
@@ -90,6 +95,30 @@ public class Main {
                     } else {
                         System.out.println("Vuelves a tirar");
                     }
+                    break;
+
+
+
+                case 2:
+                    tirada2 = tirarDados();
+                    System.out.println("sacaste:" + tirada2);
+                    if (tirada1 == tirada2) {
+                        System.out.println("Has ganados: ");
+                        saldo += apuesta;
+                        apuesta=0;
+                    } else if (tirada2 == 7) {
+                        System.out.println("Has perdido");
+                        saldo -= apuesta;
+                        apuesta=0;
+                        if (saldo < 20) {
+                            System.out.println("Su saldo no permite jugar");
+
+                            System.exit(0);
+                        }
+                    } else {
+                        System.out.println("Vuelves a tirar");
+                    }
+                    break;
             }
 
         } while (tirada1 != tirada2 && tirada2 != 7);
@@ -125,16 +154,16 @@ public class Main {
         return random.nextInt(6) + 1 + random.nextInt(6) + 1;
     }
 
-    private static double apostar() {
+    private static double apostar(double minBet) {
 
-        if (saldo < APUESTA_MIN) throw new RuntimeException("Saldo inferior a la apuesta minima");
+        if (saldo < minBet) throw new RuntimeException("Saldo inferior a la apuesta minima");
 
         double apostar;
 
         do {
             try {
                 apostar = sc.nextDouble();
-                if (apostar >= APUESTA_MIN && apostar <= saldo) {
+                if (apostar >= minBet && apostar <= saldo) {
                     return apostar;
                 } else {
                     System.out.println("Apuesta incorrecta");
